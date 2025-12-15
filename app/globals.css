@@ -99,3 +99,18 @@ textarea {
   background: var(--background);
   color: var(--foreground);
 }
+
+/* Shimmer animation for buttons */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.group:hover .group-hover\:animate-shimmer {
+  animation: shimmer 2s linear infinite;
+}
