@@ -33,6 +33,7 @@ export function showNotification(title: string, options?: NotificationOptions): 
             registration.showNotification(title, {
                 icon: '/icons/icon-192.png',
                 badge: '/icons/icon-192.png',
+                // @ts-ignore
                 vibrate: [200, 100, 200],
                 ...options,
             });
