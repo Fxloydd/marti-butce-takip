@@ -63,6 +63,7 @@ export function LocationMap({ payments, isOpen, onClose }: LocationMapProps) {
             Promise.all([
                 import('react-leaflet'),
                 import('leaflet'),
+                // @ts-ignore
                 import('leaflet/dist/leaflet.css'),
             ]).then(([reactLeaflet, L]) => {
                 MapContainer = reactLeaflet.MapContainer;
