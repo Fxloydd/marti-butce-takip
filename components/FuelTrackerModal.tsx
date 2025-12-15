@@ -333,14 +333,27 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
                                         type="range"
                                         min="3"
                                         max="20"
-                                        step="0.5"
+                                        step="0.1"
                                         value={consumptionPer100km}
                                         onChange={(e) => setConsumptionPer100km(parseFloat(e.target.value))}
                                         className="flex-1 h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-orange-500"
                                     />
-                                    <span className="text-xl font-bold text-white min-w-[60px] text-right">
-                                        {consumptionPer100km} L
-                                    </span>
+                                    <input
+                                        type="number"
+                                        inputMode="decimal"
+                                        min="1"
+                                        max="30"
+                                        step="0.1"
+                                        value={consumptionPer100km}
+                                        onChange={(e) => {
+                                            const val = parseFloat(e.target.value);
+                                            if (!isNaN(val) && val >= 1 && val <= 30) {
+                                                setConsumptionPer100km(val);
+                                            }
+                                        }}
+                                        className="w-20 px-2 py-1 text-xl font-bold text-white text-center bg-zinc-700 border border-zinc-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    />
+                                    <span className="text-zinc-400">L</span>
                                 </div>
                             </div>
 
