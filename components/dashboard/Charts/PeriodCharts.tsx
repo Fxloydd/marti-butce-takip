@@ -184,7 +184,7 @@ export function PeriodCharts({ dailyData, weeklyData, monthlyData }: PeriodChart
                             }}
                             labelStyle={{ color: '#a1a1aa', fontSize: 12 }}
                             itemStyle={{ color: '#fff', fontSize: 14 }}
-                            formatter={(value: number) => [`₺${value}`, 'Kazanç']}
+                            formatter={(value: number | undefined) => [`₺${value ?? 0}`, 'Kazanç']}
                         />
                         <Bar
                             dataKey="earnings"
