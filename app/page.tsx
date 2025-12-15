@@ -166,32 +166,23 @@ export default function Dashboard() {
 
       {/* View Title & Dynamic Action Menu */}
       <div className="px-4 pt-4 z-40">
-        <div className={`inline-flex items-center gap-1 rounded-full transition-all duration-300 ${isMenuOpen
-          ? 'bg-zinc-800 dark:bg-zinc-800 p-1'
-          : 'bg-indigo-100 dark:bg-indigo-900/30 px-3 py-1.5'
-          }`}>
+        <div className="inline-flex items-center gap-1 rounded-full bg-zinc-800 dark:bg-zinc-800 p-1 transition-all duration-300">
           {/* Toggle Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className={`inline-flex items-center gap-2 rounded-full transition-all duration-200 ${isMenuOpen
-              ? 'px-3 py-1.5 bg-zinc-700 text-white'
-              : ''
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-200 ${isMenuOpen
+              ? 'bg-zinc-700'
+              : 'bg-indigo-600 hover:bg-indigo-500'
               }`}
           >
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-200 ${isMenuOpen
-              ? 'bg-red-500 text-white'
-              : 'bg-indigo-500 text-white'
-              }`}>
+            <div className={`w-5 h-5 flex items-center justify-center transition-all duration-200`}>
               {isMenuOpen ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-red-400"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
               )}
             </div>
-            <span className={`text-sm font-medium transition-colors ${isMenuOpen
-              ? 'text-white'
-              : 'text-indigo-700 dark:text-indigo-400'
-              }`}>
+            <span className="text-sm font-medium text-white">
               {isMenuOpen ? 'Kapat' : 'Menü'}
             </span>
           </button>
