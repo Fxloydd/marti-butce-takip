@@ -167,15 +167,19 @@ export default function Dashboard() {
             : 'bg-indigo-100 dark:bg-indigo-900/30'
             }`}
         >
-          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-transform duration-300 ${isMenuOpen ? 'bg-indigo-500 scale-110 text-white' : 'bg-indigo-500 text-white'
+          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-transform duration-300 ${isMenuOpen ? 'bg-zinc-700 text-white rotate-180' : 'bg-indigo-500 text-white'
             }`}>
-            {isMenuOpen ? <Settings className="w-3.5 h-3.5" /> : (user.displayName || 'U').charAt(0)}
+            {isMenuOpen ? (
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
+            )}
           </div>
           <span className={`text-sm font-medium transition-colors ${isMenuOpen
             ? 'text-white'
             : 'text-indigo-700 dark:text-indigo-400'
             }`}>
-            {isMenuOpen ? 'Menüyü Kapat' : (isPersonalView ? 'Benim Günüm' : 'Ekip Özeti')}
+            {isMenuOpen ? 'Kapat' : 'Menü'}
           </span>
         </button>
 
