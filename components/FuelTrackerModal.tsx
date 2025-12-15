@@ -34,13 +34,19 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
     const { user } = useAuth();
     const tracker = useFuelTracker();
 
-    const [view, setView] = useState<'tracker' | 'settings' | 'history'>('tracker');
+    const [view, setView] = useState<'tracker' | 'settings' | 'history' | 'summary'>('tracker');
     const [fuelPrice, setFuelPrice] = useState(55.71);
     const [consumptionPer100km, setConsumptionPer100km] = useState(7.0);
     const [isLoadingPrice, setIsLoadingPrice] = useState(false);
     const [priceUpdatedAt, setPriceUpdatedAt] = useState<string | null>(null);
     const [tripHistory, setTripHistory] = useState<TripSummary[]>([]);
     const [isSaving, setIsSaving] = useState(false);
+    const [lastTripSummary, setLastTripSummary] = useState<{
+        distance: number;
+        fuelUsed: number;
+        fuelCost: number;
+        duration: number;
+    } | null>(null);
 
     // Load settings and history on mount
     useEffect(() => {
@@ -119,9 +125,25 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
         tracker.startTracking();
     };
 
-    const handleStopTracking = async () => {
-        const result = tracker.stopTracking();
+    const handlePauseTracking = () => {
+        tracker.pauseTracking();
+    };
+
+    const handleResumeTracking = () => {
+        tracker.resumeTracking();
+    };
+
+    const handleFinishTracking = async () => {
         const { fuelUsed, fuelCost } = tracker.calculateFuel(consumptionPer100km, fuelPrice);
+        const result = tracker.finishTracking();
+
+        // Save summary for display
+        setLastTripSummary({
+            distance: result.totalDistance,
+            fuelUsed,
+            fuelCost,
+            duration: result.duration,
+        });
 
         // Save trip to database (only summary, not coordinates)
         if (user && result.totalDistance > 0.1) {
@@ -129,7 +151,7 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
             await supabase.from('trip_history').insert({
                 user_id: user.id,
                 start_time: result.startTime?.toISOString(),
-                end_time: new Date().toISOString(),
+                end_time: result.endTime.toISOString(),
                 total_distance: result.totalDistance,
                 fuel_used: fuelUsed,
                 fuel_cost: fuelCost,
@@ -139,6 +161,9 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
             await loadTripHistory();
             setIsSaving(false);
         }
+
+        // Show summary view
+        setView('summary');
     };
 
     const { fuelUsed, fuelCost } = tracker.calculateFuel(consumptionPer100km, fuelPrice);
@@ -287,32 +312,60 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
                                 </div>
                             )}
 
-                            {/* Start/Stop Button */}
-                            <button
-                                onClick={tracker.isTracking ? handleStopTracking : handleStartTracking}
-                                disabled={isSaving}
-                                className={`w-full py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all ${tracker.isTracking
-                                    ? 'bg-red-500 hover:bg-red-600 text-white'
-                                    : 'bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 text-white'
-                                    }`}
-                            >
-                                {isSaving ? (
-                                    <>
-                                        <RefreshCw className="w-5 h-5 animate-spin" />
-                                        Kaydediliyor...
-                                    </>
-                                ) : tracker.isTracking ? (
-                                    <>
-                                        <Square className="w-5 h-5" />
-                                        Durdur
-                                    </>
-                                ) : (
-                                    <>
-                                        <Play className="w-5 h-5" />
-                                        Başlat
-                                    </>
-                                )}
-                            </button>
+                            {/* Background tracking notice */}
+                            {tracker.isTracking && (
+                                <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm">
+                                    💡 Uygulamayı açık tutun. Ekran kilitli olsa da takip devam eder.
+                                </div>
+                            )}
+
+                            {/* Control Buttons */}
+                            {!tracker.isTracking ? (
+                                <button
+                                    onClick={handleStartTracking}
+                                    className="w-full py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 text-white transition-all"
+                                >
+                                    <Play className="w-5 h-5" />
+                                    Başlat
+                                </button>
+                            ) : (
+                                <div className="flex gap-3">
+                                    {/* Pause/Resume Button */}
+                                    <button
+                                        onClick={tracker.isPaused ? handleResumeTracking : handlePauseTracking}
+                                        className={`flex-1 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${tracker.isPaused
+                                            ? 'bg-green-500 hover:bg-green-600 text-white'
+                                            : 'bg-yellow-500 hover:bg-yellow-600 text-black'
+                                            }`}
+                                    >
+                                        {tracker.isPaused ? (
+                                            <>
+                                                <Play className="w-5 h-5" />
+                                                Devam
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Square className="w-4 h-4" />
+                                                Duraklat
+                                            </>
+                                        )}
+                                    </button>
+
+                                    {/* Finish Button */}
+                                    <button
+                                        onClick={handleFinishTracking}
+                                        disabled={isSaving}
+                                        className="flex-1 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white transition-all disabled:opacity-50"
+                                    >
+                                        {isSaving ? (
+                                            <RefreshCw className="w-5 h-5 animate-spin" />
+                                        ) : (
+                                            <Square className="w-5 h-5 fill-current" />
+                                        )}
+                                        Bitir
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -426,6 +479,54 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
                                     ))}
                                 </div>
                             )}
+                        </div>
+                    )}
+
+                    {view === 'summary' && lastTripSummary && (
+                        <div className="space-y-6 text-center py-4">
+                            <div className="w-20 h-20 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">
+                                <svg className="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+
+                            <div>
+                                <h3 className="text-xl font-bold text-white mb-1">Sürüş Tamamlandı!</h3>
+                                <p className="text-zinc-500">Sürüş geçmişine kaydedildi</p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 rounded-2xl bg-zinc-800/50 border border-zinc-700/50">
+                                    <MapPin className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+                                    <p className="text-2xl font-bold text-white">{lastTripSummary.distance.toFixed(2)}</p>
+                                    <p className="text-xs text-zinc-500">km mesafe</p>
+                                </div>
+                                <div className="p-4 rounded-2xl bg-zinc-800/50 border border-zinc-700/50">
+                                    <Fuel className="w-6 h-6 text-orange-400 mx-auto mb-2" />
+                                    <p className="text-2xl font-bold text-orange-400">{lastTripSummary.fuelUsed.toFixed(2)}</p>
+                                    <p className="text-xs text-zinc-500">litre yakıt</p>
+                                </div>
+                                <div className="p-4 rounded-2xl bg-zinc-800/50 border border-zinc-700/50">
+                                    <DollarSign className="w-6 h-6 text-green-400 mx-auto mb-2" />
+                                    <p className="text-2xl font-bold text-green-400">₺{lastTripSummary.fuelCost.toFixed(2)}</p>
+                                    <p className="text-xs text-zinc-500">maliyet</p>
+                                </div>
+                                <div className="p-4 rounded-2xl bg-zinc-800/50 border border-zinc-700/50">
+                                    <Gauge className="w-6 h-6 text-purple-400 mx-auto mb-2" />
+                                    <p className="text-2xl font-bold text-purple-400">{lastTripSummary.duration.toFixed(0)}</p>
+                                    <p className="text-xs text-zinc-500">dakika süre</p>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => {
+                                    setView('tracker');
+                                    setLastTripSummary(null);
+                                }}
+                                className="w-full py-4 rounded-2xl font-bold text-lg bg-gradient-to-r from-orange-500 to-red-500 text-white hover:opacity-90 transition-all"
+                            >
+                                Tamam
+                            </button>
                         </div>
                     )}
                 </div>
