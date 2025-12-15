@@ -167,7 +167,8 @@ export default function Dashboard() {
       />
 
       {/* View Title & Dynamic Action Menu */}
-      <div className="px-4 pt-4 z-40">
+      <div className="px-4 pt-4 z-40 flex items-center gap-2">
+        {/* Menu Container */}
         <div className="inline-flex items-center gap-1 rounded-full bg-zinc-800 dark:bg-zinc-800 p-1 transition-all duration-300">
           {/* Toggle Button */}
           <button
@@ -187,16 +188,6 @@ export default function Dashboard() {
             <span className="text-sm font-medium text-white">
               {isMenuOpen ? 'Kapat' : 'Menü'}
             </span>
-          </button>
-
-          {/* Fuel Tracker Button (always visible) */}
-          <button
-            onClick={() => setIsFuelTrackerOpen(true)}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 transition-all"
-            title="Yakıt Takip"
-          >
-            <Fuel className="w-4 h-4 text-white" />
-            <span className="text-sm font-medium text-white">Yakıt</span>
           </button>
 
           {/* Action Buttons (visible when menu is open) */}
@@ -258,6 +249,18 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+
+        {/* Fuel Tracker Button (hidden when menu is open) */}
+        <button
+          onClick={() => setIsFuelTrackerOpen(true)}
+          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 transition-all duration-300 ${isMenuOpen ? 'opacity-0 scale-0 w-0 px-0 overflow-hidden' : 'opacity-100 scale-100'
+            }`}
+          title="Yakıt Takip"
+          disabled={isMenuOpen}
+        >
+          <Fuel className="w-4 h-4 text-white" />
+          <span className="text-sm font-medium text-white whitespace-nowrap">Yakıt</span>
+        </button>
       </div>
 
       {/* Content */}
