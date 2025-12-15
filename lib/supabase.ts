@@ -73,6 +73,44 @@ export type Database = {
                     value?: string;
                 };
             };
+            push_subscriptions: {
+                Row: {
+                    id: string;
+                    user_id: string;
+                    endpoint: string;
+                    keys: string;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    user_id: string;
+                    endpoint: string;
+                    keys: string;
+                };
+                Update: {
+                    endpoint?: string;
+                    keys?: string;
+                };
+            };
+            notification_settings: {
+                Row: {
+                    id: string;
+                    user_id: string;
+                    new_payment: boolean;
+                    goal_reached: boolean;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    user_id: string;
+                    new_payment?: boolean;
+                    goal_reached?: boolean;
+                };
+                Update: {
+                    new_payment?: boolean;
+                    goal_reached?: boolean;
+                };
+            };
         };
     };
 };

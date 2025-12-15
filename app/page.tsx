@@ -19,11 +19,12 @@ import { ReportModal } from '@/components/dashboard/ReportModal';
 import { LocationMap } from '@/components/dashboard/LocationMap';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { InstallButton } from '@/components/InstallButton';
+import { NotificationSettingsModal } from '@/components/NotificationSettingsModal';
 import { CardSkeleton, ChartSkeleton, ListSkeleton } from '@/components/ui/Skeleton';
 import { getDashboardData, addPayment, updatePayment, deletePayment, updateDailyGoal, getDailyGoal, ExtendedDashboardData } from '@/lib/supabase-data';
-import { notifyPaymentAdded, notifyPaymentDeleted, notifyGoalReached, requestNotificationPermission } from '@/lib/notifications';
+import { notifyPaymentAdded, notifyPaymentDeleted, notifyGoalReached, notifyAllUsersNewPayment } from '@/lib/notifications';
 import { PaymentType } from '@/types';
-import { LogOut, Settings, Shield, FileText, MapPin } from 'lucide-react';
+import { LogOut, Settings, Shield, FileText, MapPin, Bell } from 'lucide-react';
 
 type ViewMode = 'personal' | 'combined';
 
@@ -42,6 +43,7 @@ export default function Dashboard() {
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
+  const [isNotificationSettingsOpen, setIsNotificationSettingsOpen] = useState(false);
 
   const loadData = useCallback(async () => {
     if (!user) return;
@@ -106,8 +108,12 @@ export default function Dashboard() {
 
     // Sync with database in background
     await addPayment({ ...payment, userId: user?.id });
-    // Show notification
+    // Show notification to self
     notifyPaymentAdded(payment.amount, payment.user);
+    // Notify all other users
+    if (user?.id) {
+      notifyAllUsersNewPayment(user.id, payment.user, payment.amount, payment.location);
+    }
     // Check if goal reached
     if (data && data.dailyGoal.current + payment.amount >= data.dailyGoal.target) {
       notifyGoalReached('daily');
@@ -218,6 +224,15 @@ export default function Dashboard() {
                 title="Yönetici Paneli"
               >
                 <Shield className="w-4 h-4" />
+              </button>
+
+              {/* Notifications */}
+              <button
+                onClick={() => { setIsNotificationSettingsOpen(true); setIsMenuOpen(false); }}
+                className="p-2 rounded-full text-zinc-400 hover:bg-yellow-500/20 hover:text-yellow-400 transition-colors"
+                title="Bildirim Ayarları"
+              >
+                <Bell className="w-4 h-4" />
               </button>
 
               {/* Profile */}
@@ -428,6 +443,11 @@ export default function Dashboard() {
         isOpen={isMapOpen}
         onClose={() => setIsMapOpen(false)}
         payments={data?.payments || []}
+      />
+
+      <NotificationSettingsModal
+        isOpen={isNotificationSettingsOpen}
+        onClose={() => setIsNotificationSettingsOpen(false)}
       />
     </div>
   );
