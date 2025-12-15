@@ -111,6 +111,57 @@ export type Database = {
                     goal_reached?: boolean;
                 };
             };
+            fuel_settings: {
+                Row: {
+                    id: string;
+                    user_id: string;
+                    consumption_per_100km: number;
+                    fuel_price: number;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    user_id: string;
+                    consumption_per_100km?: number;
+                    fuel_price?: number;
+                };
+                Update: {
+                    consumption_per_100km?: number;
+                    fuel_price?: number;
+                    updated_at?: string;
+                };
+            };
+            trip_history: {
+                Row: {
+                    id: string;
+                    user_id: string;
+                    start_time: string;
+                    end_time: string;
+                    total_distance: number;
+                    fuel_used: number;
+                    fuel_cost: number;
+                    consumption_per_100km: number;
+                    fuel_price: number;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    user_id: string;
+                    start_time: string;
+                    end_time: string;
+                    total_distance: number;
+                    fuel_used: number;
+                    fuel_cost: number;
+                    consumption_per_100km: number;
+                    fuel_price: number;
+                };
+                Update: {
+                    total_distance?: number;
+                    fuel_used?: number;
+                    fuel_cost?: number;
+                };
+            };
         };
     };
 };

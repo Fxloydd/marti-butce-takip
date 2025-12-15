@@ -20,11 +20,12 @@ import { LocationMap } from '@/components/dashboard/LocationMap';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { InstallButton } from '@/components/InstallButton';
 import { NotificationSettingsModal } from '@/components/NotificationSettingsModal';
+import { FuelTrackerModal } from '@/components/FuelTrackerModal';
 import { CardSkeleton, ChartSkeleton, ListSkeleton } from '@/components/ui/Skeleton';
 import { getDashboardData, addPayment, updatePayment, deletePayment, updateDailyGoal, getDailyGoal, ExtendedDashboardData } from '@/lib/supabase-data';
 import { notifyPaymentAdded, notifyPaymentDeleted, notifyGoalReached, notifyAllUsersNewPayment } from '@/lib/notifications';
 import { PaymentType } from '@/types';
-import { LogOut, Settings, Shield, FileText, MapPin, Bell } from 'lucide-react';
+import { LogOut, Settings, Shield, FileText, MapPin, Bell, Fuel } from 'lucide-react';
 
 type ViewMode = 'personal' | 'combined';
 
@@ -44,6 +45,7 @@ export default function Dashboard() {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [isNotificationSettingsOpen, setIsNotificationSettingsOpen] = useState(false);
+  const [isFuelTrackerOpen, setIsFuelTrackerOpen] = useState(false);
 
   const loadData = useCallback(async () => {
     if (!user) return;
@@ -185,6 +187,16 @@ export default function Dashboard() {
             <span className="text-sm font-medium text-white">
               {isMenuOpen ? 'Kapat' : 'Menü'}
             </span>
+          </button>
+
+          {/* Fuel Tracker Button (always visible) */}
+          <button
+            onClick={() => setIsFuelTrackerOpen(true)}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 transition-all"
+            title="Yakıt Takip"
+          >
+            <Fuel className="w-4 h-4 text-white" />
+            <span className="text-sm font-medium text-white">Yakıt</span>
           </button>
 
           {/* Action Buttons (visible when menu is open) */}
@@ -439,6 +451,11 @@ export default function Dashboard() {
       <NotificationSettingsModal
         isOpen={isNotificationSettingsOpen}
         onClose={() => setIsNotificationSettingsOpen(false)}
+      />
+
+      <FuelTrackerModal
+        isOpen={isFuelTrackerOpen}
+        onClose={() => setIsFuelTrackerOpen(false)}
       />
     </div>
   );
