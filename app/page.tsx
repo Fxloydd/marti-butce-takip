@@ -143,6 +143,9 @@ export default function Dashboard() {
 
   const isPersonalView = viewMode === 'personal';
 
+  /* Removed existing action buttons logic to replace with collapsible menu */
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 pb-24">
       {/* Top Bar */}
@@ -154,59 +157,80 @@ export default function Dashboard() {
         isLoading={isLoading}
       />
 
-      {/* View Title & Actions */}
-      <div className="px-4 pt-4 flex items-center justify-between">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30">
-          <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold">
-            {user.displayName.charAt(0)}
+      {/* View Title & Dynamic Action Menu */}
+      <div className="px-4 pt-4 relative flex items-center justify-between z-40">
+        {/* Toggle / View Indicator */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 z-50 ${isMenuOpen
+            ? 'bg-zinc-800 text-white shadow-lg ring-2 ring-indigo-500 ring-offset-2 ring-offset-zinc-950'
+            : 'bg-indigo-100 dark:bg-indigo-900/30'
+            }`}
+        >
+          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-transform duration-300 ${isMenuOpen ? 'bg-indigo-500 scale-110 text-white' : 'bg-indigo-500 text-white'
+            }`}>
+            {isMenuOpen ? <Settings className="w-3.5 h-3.5" /> : user.displayName.charAt(0)}
           </div>
-          <span className="text-sm font-medium text-indigo-700 dark:text-indigo-400">
-            {isPersonalView ? 'Benim Günüm' : 'Ekip Özeti'}
+          <span className={`text-sm font-medium transition-colors ${isMenuOpen
+            ? 'text-white'
+            : 'text-indigo-700 dark:text-indigo-400'
+            }`}>
+            {isMenuOpen ? 'Menüyü Kapat' : (isPersonalView ? 'Benim Günüm' : 'Ekip Özeti')}
           </span>
-        </div>
+        </button>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2">
-          {/* Report Button */}
-          <button
-            onClick={() => setIsReportModalOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-600 dark:hover:text-green-400 transition-colors"
-          >
-            <FileText className="w-4 h-4" />
-          </button>
+        {/* Action Buttons (Collapsible) */}
+        <div className={`flex items-center gap-2 absolute left-0 pl-[160px] w-full overflow-hidden transition-all duration-300 ease-out origin-left ${isMenuOpen
+          ? 'opacity-100 translate-x-0'
+          : 'opacity-0 -translate-x-8 pointer-events-none'
+          }`}>
 
-          {/* Map Button */}
-          <button
-            onClick={() => setIsMapOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-          >
-            <MapPin className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2 p-1 pr-4 bg-white/10 backdrop-blur-md rounded-r-2xl">
+            {/* Report */}
+            <button
+              onClick={() => { setIsReportModalOpen(true); setIsMenuOpen(false); }}
+              className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-600 dark:hover:text-green-400 shadow-sm"
+              title="Rapor Al"
+            >
+              <FileText className="w-4 h-4" />
+            </button>
 
-          {/* Admin Panel Button */}
-          <button
-            onClick={() => setIsAdminPanelOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-          >
-            <Shield className="w-4 h-4" />
-          </button>
+            {/* Map */}
+            <button
+              onClick={() => { setIsMapOpen(true); setIsMenuOpen(false); }}
+              className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 shadow-sm"
+              title="Harita"
+            >
+              <MapPin className="w-4 h-4" />
+            </button>
 
-          {/* Profile Button */}
-          <button
-            onClick={() => setIsProfileModalOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-          >
-            <Settings className="w-4 h-4" />
-          </button>
+            {/* Admin */}
+            <button
+              onClick={() => { setIsAdminPanelOpen(true); setIsMenuOpen(false); }}
+              className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 shadow-sm"
+              title="Yönetici Paneli"
+            >
+              <Shield className="w-4 h-4" />
+            </button>
 
-          {/* Logout Button */}
-          <button
-            onClick={logout}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-            <span className="text-sm font-medium hidden sm:inline">Çıkış</span>
-          </button>
+            {/* Profile */}
+            <button
+              onClick={() => { setIsProfileModalOpen(true); setIsMenuOpen(false); }}
+              className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 shadow-sm"
+              title="Profil Ayarları"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+
+            {/* Logout */}
+            <button
+              onClick={logout}
+              className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 shadow-sm"
+              title="Çıkış Yap"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 
