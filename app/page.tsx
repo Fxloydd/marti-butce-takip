@@ -18,6 +18,7 @@ import { AdminPanel } from '@/components/admin/AdminPanel';
 import { ReportModal } from '@/components/dashboard/ReportModal';
 import { LocationMap } from '@/components/dashboard/LocationMap';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { InstallButton } from '@/components/InstallButton';
 import { CardSkeleton, ChartSkeleton, ListSkeleton } from '@/components/ui/Skeleton';
 import { getDashboardData, addPayment, updatePayment, deletePayment, updateDailyGoal, getDailyGoal, ExtendedDashboardData } from '@/lib/supabase-data';
 import { notifyPaymentAdded, notifyPaymentDeleted, notifyGoalReached, requestNotificationPermission } from '@/lib/notifications';
@@ -379,6 +380,9 @@ export default function Dashboard() {
 
       {/* Theme Toggle */}
       <ThemeToggle />
+
+      {/* Install App Button */}
+      <InstallButton />
 
       {/* Modals */}
       <AddPassengerModal
