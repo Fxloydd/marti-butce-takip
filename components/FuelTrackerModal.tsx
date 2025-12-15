@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { X, Play, Square, Fuel, MapPin, Gauge, DollarSign, RefreshCw, Settings, History, Car, Navigation } from 'lucide-react';
+import { X, Play, Square, Fuel, MapPin, Gauge, DollarSign, RefreshCw, Settings, History, Car, Navigation, Plus } from 'lucide-react';
 import { useFuelTracker, TripSummary } from '@/hooks/useFuelTracker';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -34,13 +34,14 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
     const { user } = useAuth();
     const tracker = useFuelTracker();
 
-    const [view, setView] = useState<'tracker' | 'settings' | 'history' | 'summary'>('tracker');
+    const [view, setView] = useState<'tracker' | 'settings' | 'history' | 'summary' | 'manual'>('tracker');
     const [fuelPrice, setFuelPrice] = useState(55.71);
     const [consumptionPer100km, setConsumptionPer100km] = useState(7.0);
     const [isLoadingPrice, setIsLoadingPrice] = useState(false);
     const [priceUpdatedAt, setPriceUpdatedAt] = useState<string | null>(null);
     const [tripHistory, setTripHistory] = useState<TripSummary[]>([]);
     const [isSaving, setIsSaving] = useState(false);
+    const [manualDistance, setManualDistance] = useState<string>('');
     const [lastTripSummary, setLastTripSummary] = useState<{
         distance: number;
         fuelUsed: number;
@@ -166,6 +167,43 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
         setView('summary');
     };
 
+    const handleManualTrip = async () => {
+        const distance = parseFloat(manualDistance);
+        if (isNaN(distance) || distance <= 0) return;
+
+        const manualFuelUsed = (distance / 100) * consumptionPer100km;
+        const manualFuelCost = manualFuelUsed * fuelPrice;
+
+        // Save summary for display
+        setLastTripSummary({
+            distance,
+            fuelUsed: manualFuelUsed,
+            fuelCost: manualFuelCost,
+            duration: 0, // No duration for manual entries
+        });
+
+        // Save trip to database
+        if (user) {
+            setIsSaving(true);
+            const now = new Date();
+            await supabase.from('trip_history').insert({
+                user_id: user.id,
+                start_time: now.toISOString(),
+                end_time: now.toISOString(),
+                total_distance: distance,
+                fuel_used: manualFuelUsed,
+                fuel_cost: manualFuelCost,
+                consumption_per_100km: consumptionPer100km,
+                fuel_price: fuelPrice,
+            });
+            await loadTripHistory();
+            setIsSaving(false);
+        }
+
+        setManualDistance('');
+        setView('summary');
+    };
+
     const { fuelUsed, fuelCost } = tracker.calculateFuel(consumptionPer100km, fuelPrice);
 
     if (!isOpen) return null;
@@ -185,6 +223,13 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setView('manual')}
+                            className={`p-2 rounded-full transition-colors ${view === 'manual' ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'}`}
+                            title="Manuel Ekle"
+                        >
+                            <Plus className="w-5 h-5" />
+                        </button>
                         <button
                             onClick={() => setView('settings')}
                             className={`p-2 rounded-full transition-colors ${view === 'settings' ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'}`}
@@ -433,6 +478,70 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
                                 className="w-full py-3 rounded-xl bg-orange-500 text-white font-medium hover:bg-orange-600 transition-colors"
                             >
                                 Kaydet
+                            </button>
+                        </div>
+                    )}
+
+                    {view === 'manual' && (
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                <Plus className="w-5 h-5 text-orange-400" />
+                                Manuel Sürüş Ekle
+                            </h3>
+
+                            <p className="text-sm text-zinc-400">
+                                Strava, Relive veya başka bir uygulamadan aldığınız km değerini girin.
+                            </p>
+
+                            {/* Distance Input */}
+                            <div className="p-4 rounded-2xl bg-zinc-800/50 border border-zinc-700/50">
+                                <label className="block text-sm text-zinc-400 mb-2">
+                                    Toplam Mesafe (km)
+                                </label>
+                                <input
+                                    type="number"
+                                    inputMode="decimal"
+                                    step="0.1"
+                                    value={manualDistance}
+                                    onChange={(e) => setManualDistance(e.target.value)}
+                                    placeholder="Örn: 25.5"
+                                    className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-700 text-white text-xl font-bold text-center"
+                                />
+                            </div>
+
+                            {/* Preview */}
+                            {manualDistance && parseFloat(manualDistance) > 0 && (
+                                <div className="p-4 rounded-2xl bg-zinc-800/30 border border-zinc-700/30">
+                                    <p className="text-sm text-zinc-400 mb-3">Hesaplanan değerler:</p>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="text-center">
+                                            <p className="text-lg font-bold text-orange-400">
+                                                {((parseFloat(manualDistance) / 100) * consumptionPer100km).toFixed(2)} L
+                                            </p>
+                                            <p className="text-xs text-zinc-500">Yakıt</p>
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="text-lg font-bold text-green-400">
+                                                ₺{(((parseFloat(manualDistance) / 100) * consumptionPer100km) * fuelPrice).toFixed(2)}
+                                            </p>
+                                            <p className="text-xs text-zinc-500">Maliyet</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Save Button */}
+                            <button
+                                onClick={handleManualTrip}
+                                disabled={!manualDistance || parseFloat(manualDistance) <= 0 || isSaving}
+                                className="w-full py-4 rounded-2xl font-bold text-lg bg-gradient-to-r from-orange-500 to-red-500 text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {isSaving ? (
+                                    <RefreshCw className="w-5 h-5 animate-spin" />
+                                ) : (
+                                    <Plus className="w-5 h-5" />
+                                )}
+                                Sürüş Ekle
                             </button>
                         </div>
                     )}
