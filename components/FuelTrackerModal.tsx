@@ -35,7 +35,7 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
     const tracker = useFuelTracker();
 
     const [view, setView] = useState<'tracker' | 'settings' | 'history'>('tracker');
-    const [fuelPrice, setFuelPrice] = useState(48.50);
+    const [fuelPrice, setFuelPrice] = useState(55.71);
     const [consumptionPer100km, setConsumptionPer100km] = useState(7.0);
     const [isLoadingPrice, setIsLoadingPrice] = useState(false);
     const [priceUpdatedAt, setPriceUpdatedAt] = useState<string | null>(null);
@@ -263,15 +263,18 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
 
                             {/* Fuel Price Info */}
                             <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-800/30 border border-zinc-700/30">
-                                <div className="flex items-center gap-2">
-                                    <Fuel className="w-4 h-4 text-orange-400" />
-                                    <span className="text-sm text-zinc-400">Benzin fiyatı:</span>
-                                    <span className="text-white font-medium">₺{fuelPrice.toFixed(2)}/L</span>
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2">
+                                        <Fuel className="w-4 h-4 text-orange-400" />
+                                        <span className="text-white font-medium">₺{fuelPrice.toFixed(2)}/L</span>
+                                    </div>
+                                    <p className="text-xs text-zinc-500 mt-0.5">Eskişehir Merkez - OPET</p>
                                 </div>
                                 <button
                                     onClick={() => fetchFuelPrice(true)}
                                     disabled={isLoadingPrice}
                                     className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors disabled:opacity-50"
+                                    title="Fiyatı güncelle"
                                 >
                                     <RefreshCw className={`w-4 h-4 ${isLoadingPrice ? 'animate-spin' : ''}`} />
                                 </button>
@@ -289,8 +292,8 @@ export function FuelTrackerModal({ isOpen, onClose }: FuelTrackerModalProps) {
                                 onClick={tracker.isTracking ? handleStopTracking : handleStartTracking}
                                 disabled={isSaving}
                                 className={`w-full py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all ${tracker.isTracking
-                                        ? 'bg-red-500 hover:bg-red-600 text-white'
-                                        : 'bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 text-white'
+                                    ? 'bg-red-500 hover:bg-red-600 text-white'
+                                    : 'bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 text-white'
                                     }`}
                             >
                                 {isSaving ? (
