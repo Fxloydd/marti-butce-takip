@@ -9,21 +9,34 @@ export async function generatePDFReport(
     // Dynamic import to avoid SSR issues
     const { jsPDF } = await import('jspdf');
 
+    // Generate PDF with ASCII characters to avoid font issues
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
+
+    // Helper to replace Turkish chars
+    const tr = (text: string) => {
+        return text
+            .replace(/ğ/g, 'g').replace(/Ğ/g, 'G')
+            .replace(/ü/g, 'u').replace(/Ü/g, 'U')
+            .replace(/ş/g, 's').replace(/Ş/g, 'S')
+            .replace(/ı/g, 'i').replace(/İ/g, 'I')
+            .replace(/ö/g, 'o').replace(/Ö/g, 'O')
+            .replace(/ç/g, 'c').replace(/Ç/g, 'C')
+            .replace(/₺/g, 'TL');
+    };
 
     // Header
     doc.setFontSize(20);
     doc.setTextColor(99, 102, 241); // Indigo
-    doc.text('Martı Takip', pageWidth / 2, 20, { align: 'center' });
+    doc.text(tr('Martı Takip'), pageWidth / 2, 20, { align: 'center' });
 
     doc.setFontSize(14);
     doc.setTextColor(60, 60, 60);
-    doc.text(title, pageWidth / 2, 30, { align: 'center' });
+    doc.text(tr(title), pageWidth / 2, 30, { align: 'center' });
 
     doc.setFontSize(10);
     doc.setTextColor(120, 120, 120);
-    doc.text(dateRange, pageWidth / 2, 38, { align: 'center' });
+    doc.text(tr(dateRange), pageWidth / 2, 38, { align: 'center' });
 
     // Summary
     const totalEarnings = payments.reduce((sum, p) => sum + p.amount, 0);
@@ -32,24 +45,24 @@ export async function generatePDFReport(
 
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    doc.text('Özet', 20, 55);
+    doc.text(tr('Özet'), 20, 55);
 
     doc.setFontSize(10);
-    doc.text(`Toplam Kazanç: ₺${totalEarnings.toFixed(2)}`, 20, 65);
-    doc.text(`Nakit: ₺${cashTotal.toFixed(2)}`, 20, 72);
-    doc.text(`IBAN: ₺${ibanTotal.toFixed(2)}`, 20, 79);
-    doc.text(`Toplam Yolcu: ${payments.length}`, 20, 86);
+    doc.text(tr(`Toplam Kazanç: ${totalEarnings.toFixed(2)} TL`), 20, 65);
+    doc.text(tr(`Nakit: ${cashTotal.toFixed(2)} TL`), 20, 72);
+    doc.text(tr(`IBAN: ${ibanTotal.toFixed(2)} TL`), 20, 79);
+    doc.text(tr(`Toplam Yolcu: ${payments.length}`), 20, 86);
 
     // Table header
     let yPos = 100;
     doc.setFillColor(99, 102, 241);
     doc.rect(20, yPos - 5, pageWidth - 40, 10, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.text('Saat', 25, yPos + 2);
-    doc.text('Tutar', 55, yPos + 2);
-    doc.text('Tür', 95, yPos + 2);
-    doc.text('Kullanıcı', 125, yPos + 2);
-    doc.text('Konum', 160, yPos + 2);
+    doc.text(tr('Saat'), 25, yPos + 2);
+    doc.text(tr('Tutar'), 55, yPos + 2);
+    doc.text(tr('Tür'), 95, yPos + 2);
+    doc.text(tr('Kullanıcı'), 125, yPos + 2);
+    doc.text(tr('Konum'), 160, yPos + 2);
 
     // Table rows
     doc.setTextColor(60, 60, 60);
@@ -66,16 +79,16 @@ export async function generatePDFReport(
             : '--:--';
 
         doc.text(time, 25, yPos);
-        doc.text(`₺${payment.amount.toFixed(2)}`, 55, yPos);
+        doc.text(tr(`${payment.amount.toFixed(2)} TL`), 55, yPos);
         doc.text(payment.paymentType === 'cash' ? 'Nakit' : 'IBAN', 95, yPos);
-        doc.text(payment.user.substring(0, 12), 125, yPos);
-        doc.text(payment.location.substring(0, 20), 160, yPos);
+        doc.text(tr(payment.user.substring(0, 12)), 125, yPos);
+        doc.text(tr(payment.location.substring(0, 20)), 160, yPos);
 
         yPos += 8;
     });
 
     if (payments.length > 30) {
-        doc.text(`... ve ${payments.length - 30} kayıt daha`, 20, yPos + 5);
+        doc.text(tr(`... ve ${payments.length - 30} kayıt daha`), 20, yPos + 5);
     }
 
     // Footer
@@ -83,7 +96,7 @@ export async function generatePDFReport(
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
     doc.text(
-        `Oluşturulma: ${new Date().toLocaleString('tr-TR')}`,
+        tr(`Oluşturulma: ${new Date().toLocaleString('tr-TR')}`),
         pageWidth / 2,
         doc.internal.pageSize.getHeight() - 10,
         { align: 'center' }
