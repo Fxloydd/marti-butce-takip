@@ -38,7 +38,7 @@ async function fetchOPETPrice(): Promise<number | null> {
 
         // Alternative: Try to find any benzin price pattern
         // Look for the price table structure
-        const pricePattern = /ESK[İI]ŞEH[İI]R.*?(\d{2}[,.]\d{2})/is;
+        const pricePattern = /ESK[İI]ŞEH[İI]R[\s\S]*?(\d{2}[,.]\d{2})/i;
         const altMatch = html.match(pricePattern);
 
         if (altMatch && altMatch[1]) {
