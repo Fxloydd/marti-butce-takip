@@ -54,7 +54,7 @@ export function HourlyEarningsChart({ data }: HourlyEarningsChartProps) {
                             }}
                             labelStyle={{ color: '#a1a1aa', fontSize: 12 }}
                             itemStyle={{ color: '#ffffff', fontSize: 14, fontWeight: 600 }}
-                            formatter={(value: number) => [`₺${value}`, 'Kazanç']}
+                            formatter={(value: number | undefined) => [`₺${value ?? 0}`, 'Kazanç']}
                         />
                         <Area
                             type="monotone"
