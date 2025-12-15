@@ -32,6 +32,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<ViewMode>('personal');
   const [currentGoal, setCurrentGoal] = useState(3000);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -143,8 +144,7 @@ export default function Dashboard() {
 
   const isPersonalView = viewMode === 'personal';
 
-  /* Removed existing action buttons logic to replace with collapsible menu */
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 pb-24">
@@ -169,7 +169,7 @@ export default function Dashboard() {
         >
           <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-transform duration-300 ${isMenuOpen ? 'bg-indigo-500 scale-110 text-white' : 'bg-indigo-500 text-white'
             }`}>
-            {isMenuOpen ? <Settings className="w-3.5 h-3.5" /> : user.displayName.charAt(0)}
+            {isMenuOpen ? <Settings className="w-3.5 h-3.5" /> : (user.displayName || 'U').charAt(0)}
           </div>
           <span className={`text-sm font-medium transition-colors ${isMenuOpen
             ? 'text-white'
