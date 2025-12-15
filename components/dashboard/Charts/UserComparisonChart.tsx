@@ -48,9 +48,9 @@ export function UserComparisonChart({ data }: UserComparisonChartProps) {
                             }}
                             labelStyle={{ color: '#a1a1aa', fontSize: 12 }}
                             itemStyle={{ color: '#ffffff', fontSize: 14, fontWeight: 600 }}
-                            formatter={(value: number, name: string) => {
+                            formatter={(value: number | undefined, name: string) => {
                                 const label = name === 'cash' ? 'Nakit' : name === 'iban' ? 'IBAN' : 'Toplam';
-                                return [`₺${value}`, label];
+                                return [`₺${value ?? 0}`, label];
                             }}
                         />
                         <Bar
