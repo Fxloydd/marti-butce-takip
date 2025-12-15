@@ -163,6 +163,8 @@ export function AddPassengerModal({
                         </label>
                         <input
                             type="number"
+                            inputMode="decimal"
+                            pattern="[0-9]*"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
                             placeholder="0"
@@ -178,8 +180,8 @@ export function AddPassengerModal({
                                     type="button"
                                     onClick={() => setAmount(q.toString())}
                                     className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${amount === q.toString()
-                                            ? 'bg-indigo-500 text-white'
-                                            : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30'
+                                        ? 'bg-indigo-500 text-white'
+                                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30'
                                         }`}
                                 >
                                     ₺{q}
@@ -198,8 +200,8 @@ export function AddPassengerModal({
                                 type="button"
                                 onClick={() => setPaymentType('cash')}
                                 className={`flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-medium transition-all ${paymentType === 'cash'
-                                        ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 ring-2 ring-green-500'
-                                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
+                                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 ring-2 ring-green-500'
+                                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
                                     }`}
                             >
                                 <Wallet className="w-5 h-5" />
@@ -209,8 +211,8 @@ export function AddPassengerModal({
                                 type="button"
                                 onClick={() => setPaymentType('iban')}
                                 className={`flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-medium transition-all ${paymentType === 'iban'
-                                        ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 ring-2 ring-indigo-500'
-                                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
+                                    ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 ring-2 ring-indigo-500'
+                                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
                                     }`}
                             >
                                 <CreditCard className="w-5 h-5" />
@@ -264,8 +266,8 @@ export function AddPassengerModal({
                                     type="button"
                                     onClick={() => setLocation(loc)}
                                     className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${location === loc
-                                            ? 'bg-indigo-500 text-white'
-                                            : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30'
+                                        ? 'bg-indigo-500 text-white'
+                                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30'
                                         }`}
                                 >
                                     {loc}

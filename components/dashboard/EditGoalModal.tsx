@@ -62,6 +62,8 @@ export function EditGoalModal({ isOpen, onClose, currentGoal, onSave }: EditGoal
                         </label>
                         <input
                             type="number"
+                            inputMode="decimal"
+                            pattern="[0-9]*"
                             value={goal}
                             onChange={(e) => setGoal(e.target.value)}
                             placeholder="0"
@@ -80,8 +82,8 @@ export function EditGoalModal({ isOpen, onClose, currentGoal, onSave }: EditGoal
                                     type="button"
                                     onClick={() => setGoal(preset.toString())}
                                     className={`px-3 py-2 text-sm font-medium rounded-xl transition-all ${goal === preset.toString()
-                                            ? 'bg-indigo-500 text-white'
-                                            : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30'
+                                        ? 'bg-indigo-500 text-white'
+                                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30'
                                         }`}
                                 >
                                     ₺{preset.toLocaleString('tr-TR')}
