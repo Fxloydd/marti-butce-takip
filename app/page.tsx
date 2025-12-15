@@ -159,83 +159,86 @@ export default function Dashboard() {
       />
 
       {/* View Title & Dynamic Action Menu */}
-      <div className="px-4 pt-4 relative flex items-center justify-between z-40">
-        {/* Toggle / View Indicator */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 z-50 ${isMenuOpen
-            ? 'bg-zinc-800 text-white shadow-lg ring-2 ring-indigo-500 ring-offset-2 ring-offset-zinc-950'
-            : 'bg-indigo-100 dark:bg-indigo-900/30'
-            }`}
-        >
-          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-transform duration-300 ${isMenuOpen ? 'bg-zinc-700 text-white rotate-180' : 'bg-indigo-500 text-white'
-            }`}>
-            {isMenuOpen ? (
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
-            )}
-          </div>
-          <span className={`text-sm font-medium transition-colors ${isMenuOpen
-            ? 'text-white'
-            : 'text-indigo-700 dark:text-indigo-400'
-            }`}>
-            {isMenuOpen ? 'Kapat' : 'Menü'}
-          </span>
-        </button>
-
-        {/* Action Buttons (Collapsible) */}
-        <div className={`flex items-center gap-2 absolute left-0 pl-[160px] w-full overflow-hidden transition-all duration-300 ease-out origin-left ${isMenuOpen
-          ? 'opacity-100 translate-x-0'
-          : 'opacity-0 -translate-x-8 pointer-events-none'
+      <div className="px-4 pt-4 z-40">
+        <div className={`inline-flex items-center gap-1 rounded-full transition-all duration-300 ${isMenuOpen
+          ? 'bg-zinc-800 dark:bg-zinc-800 p-1'
+          : 'bg-indigo-100 dark:bg-indigo-900/30 px-3 py-1.5'
           }`}>
+          {/* Toggle Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className={`inline-flex items-center gap-2 rounded-full transition-all duration-200 ${isMenuOpen
+              ? 'px-3 py-1.5 bg-zinc-700 text-white'
+              : ''
+              }`}
+          >
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-200 ${isMenuOpen
+              ? 'bg-red-500 text-white'
+              : 'bg-indigo-500 text-white'
+              }`}>
+              {isMenuOpen ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
+              )}
+            </div>
+            <span className={`text-sm font-medium transition-colors ${isMenuOpen
+              ? 'text-white'
+              : 'text-indigo-700 dark:text-indigo-400'
+              }`}>
+              {isMenuOpen ? 'Kapat' : 'Menü'}
+            </span>
+          </button>
 
-          <div className="flex items-center gap-2 p-1 pr-4 bg-white/10 backdrop-blur-md rounded-r-2xl">
-            {/* Report */}
-            <button
-              onClick={() => { setIsReportModalOpen(true); setIsMenuOpen(false); }}
-              className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-600 dark:hover:text-green-400 shadow-sm"
-              title="Rapor Al"
-            >
-              <FileText className="w-4 h-4" />
-            </button>
+          {/* Action Buttons (visible when menu is open) */}
+          {isMenuOpen && (
+            <div className="flex items-center gap-1 ml-1">
+              {/* Report */}
+              <button
+                onClick={() => { setIsReportModalOpen(true); setIsMenuOpen(false); }}
+                className="p-2 rounded-full text-zinc-400 hover:bg-green-500/20 hover:text-green-400 transition-colors"
+                title="Rapor Al"
+              >
+                <FileText className="w-4 h-4" />
+              </button>
 
-            {/* Map */}
-            <button
-              onClick={() => { setIsMapOpen(true); setIsMenuOpen(false); }}
-              className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 shadow-sm"
-              title="Harita"
-            >
-              <MapPin className="w-4 h-4" />
-            </button>
+              {/* Map */}
+              <button
+                onClick={() => { setIsMapOpen(true); setIsMenuOpen(false); }}
+                className="p-2 rounded-full text-zinc-400 hover:bg-blue-500/20 hover:text-blue-400 transition-colors"
+                title="Harita"
+              >
+                <MapPin className="w-4 h-4" />
+              </button>
 
-            {/* Admin */}
-            <button
-              onClick={() => { setIsAdminPanelOpen(true); setIsMenuOpen(false); }}
-              className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 shadow-sm"
-              title="Yönetici Paneli"
-            >
-              <Shield className="w-4 h-4" />
-            </button>
+              {/* Admin */}
+              <button
+                onClick={() => { setIsAdminPanelOpen(true); setIsMenuOpen(false); }}
+                className="p-2 rounded-full text-zinc-400 hover:bg-purple-500/20 hover:text-purple-400 transition-colors"
+                title="Yönetici Paneli"
+              >
+                <Shield className="w-4 h-4" />
+              </button>
 
-            {/* Profile */}
-            <button
-              onClick={() => { setIsProfileModalOpen(true); setIsMenuOpen(false); }}
-              className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 shadow-sm"
-              title="Profil Ayarları"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
+              {/* Profile */}
+              <button
+                onClick={() => { setIsProfileModalOpen(true); setIsMenuOpen(false); }}
+                className="p-2 rounded-full text-zinc-400 hover:bg-indigo-500/20 hover:text-indigo-400 transition-colors"
+                title="Profil Ayarları"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
 
-            {/* Logout */}
-            <button
-              onClick={logout}
-              className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 shadow-sm"
-              title="Çıkış Yap"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
+              {/* Logout */}
+              <button
+                onClick={logout}
+                className="p-2 rounded-full text-zinc-400 hover:bg-red-500/20 hover:text-red-400 transition-colors"
+                title="Çıkış Yap"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
